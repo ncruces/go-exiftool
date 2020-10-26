@@ -15,7 +15,7 @@ const boundary = "1854673209"
 // Servers avoid the overhead of loading ExifTool for each command.
 // Servers are safe for concurrent use by multiple goroutines.
 type Server struct {
-	path   string
+	exec   string
 	args   []string
 	srvMtx sync.Mutex
 	cmdMtx sync.Mutex
@@ -27,11 +27,14 @@ type Server struct {
 }
 
 // NewServer loads a new instance of ExifTool.
-func NewServer(path, arg1 string, commonArg ...string) (*Server, error) {
-	e := &Server{path: path}
+func NewServer(commonArg ...string) (*Server, error) {
+	e := &Server{exec: Exec}
 
-	if arg1 != "" {
-		e.args = append(e.args, arg1)
+	if Arg1 != "" {
+		e.args = append(e.args, Arg1)
+	}
+	if Config != "" {
+		e.args = append(e.args, "-config", Config)
 	}
 
 	e.args = append(e.args, "-stay_open", "true", "-@", "-", "-common_args", "-echo4", "{ready"+boundary+"}", "-charset", "filename=utf8")
@@ -41,7 +44,7 @@ func NewServer(path, arg1 string, commonArg ...string) (*Server, error) {
 }
 
 func (e *Server) start() error {
-	cmd := exec.Command(e.path, e.args...)
+	cmd := exec.Command(e.exec, e.args...)
 
 	stdin, err := cmd.StdinPipe()
 	if err != nil {

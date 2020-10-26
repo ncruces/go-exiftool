@@ -3,6 +3,8 @@
 set -eo pipefail
 shopt -s extglob
 
+echo ${1:-dist}
+
 exiftool="https://exiftool.org/Image-ExifTool-12.00.tar.gz"
 
 
@@ -26,8 +28,8 @@ rm -rf t
 popd
 
 # Move to destination
-rm -rf "dist"
-mv tmp/exiftool "dist"
+rm -rf ${1:-dist}
+mv tmp/exiftool ${1:-dist}
 
 # Cleanup
 rm -rf tmp/

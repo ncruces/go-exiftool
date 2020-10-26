@@ -7,7 +7,7 @@ import (
 )
 
 func TestServer(t *testing.T) {
-	et, err := NewServer(path, arg1)
+	et, err := NewServer()
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -4,12 +4,11 @@ import (
 	"runtime"
 )
 
-const path = "dist/exiftool"
-
-var arg1 string
-
 func init() {
 	if runtime.GOOS == "windows" {
-		arg1 = path
+		Exec = `dist\exiftool.exe`
+		Arg1 = `dist\exiftool`
+	} else {
+		Exec = "dist/exiftool"
 	}
 }

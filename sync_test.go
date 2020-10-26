@@ -8,7 +8,7 @@ import (
 
 func TestCommand(t *testing.T) {
 	// ask for version number
-	out, err := Command(path, arg1, nil, "-ver")
+	out, err := Command(nil, "-ver")
 	if err != nil {
 		t.Fatal(err)
 	} else if ver, err := strconv.ParseFloat(string(bytes.TrimSpace(out)), 64); err != nil {

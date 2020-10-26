@@ -57,8 +57,8 @@ rm -rf bin t
 popd
 
 # Move to destination
-rm -rf "dist"
-mv tmp/exiftool "dist"
+rm -rf ${1:-dist}
+mv tmp/exiftool ${1:-dist}
 
 # Cleanup
 rm -rf tmp/

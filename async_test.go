@@ -8,7 +8,7 @@ import (
 )
 
 func TestCommandAsync(t *testing.T) {
-	in, out, err := CommandAsync(path, arg1, "-@", "-")
+	in, out, err := CommandAsync("-@", "-")
 	if err != nil {
 		t.Fatal(err)
 	}

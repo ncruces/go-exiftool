@@ -10,11 +10,14 @@ import (
 // Command runs an ExifTool command with the given arguments asynchronously,
 // and returns pipes connected to its stdin and stdout.
 // Writing to stdin and reading from stdout should be done concurrently.
-func CommandAsync(path, arg1 string, arg ...string) (stdin io.WriteCloser, stdout io.ReadCloser, err error) {
+func CommandAsync(arg ...string) (stdin io.WriteCloser, stdout io.ReadCloser, err error) {
 	var args []string
 
-	if arg1 != "" {
-		args = append(args, arg1)
+	if Arg1 != "" {
+		args = append(args, Arg1)
+	}
+	if Config != "" {
+		args = append(args, "-config", Config)
 	}
 
 	args = append(args, "-charset", "filename=utf8")
@@ -22,7 +25,7 @@ func CommandAsync(path, arg1 string, arg ...string) (stdin io.WriteCloser, stdou
 
 	var res asyncResult
 
-	res.cmd = exec.Command(path, args...)
+	res.cmd = exec.Command(Exec, args...)
 	res.cmd.Stderr = &res.err
 	res.out, err = res.cmd.StdoutPipe()
 	if err != nil {
