@@ -3,8 +3,8 @@
 set -eo pipefail
 shopt -s extglob
 
-exiftool="https://exiftool.org/Image-ExifTool-12.00.tar.gz"
-strawberry="http://strawberryperl.com/download/5.32.0.1/strawberry-perl-5.32.0.1-64bit-portable.zip"
+exiftool="https://exiftool.org/Image-ExifTool-12.15.tar.gz"
+strawberry="https://strawberryperl.com/download/5.32.0.1/strawberry-perl-5.32.0.1-64bit-portable.zip"
 
 cd $(dirname "${BASH_SOURCE[0]}")
 
