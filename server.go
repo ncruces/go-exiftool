@@ -40,7 +40,10 @@ func NewServer(commonArg ...string) (*Server, error) {
 	e.args = append(e.args, "-stay_open", "true", "-@", "-", "-common_args", "-echo4", "{ready"+boundary+"}", "-charset", "filename=utf8")
 	e.args = append(e.args, commonArg...)
 
-	return e, e.start()
+	if err := e.start(); err != nil {
+		return nil, err
+	}
+	return e, nil
 }
 
 func (e *Server) start() error {
