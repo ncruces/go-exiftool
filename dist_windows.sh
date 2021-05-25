@@ -3,7 +3,7 @@
 set -eo pipefail
 shopt -s extglob
 
-exiftool="https://exiftool.org/Image-ExifTool-12.16.tar.gz"
+exiftool="https://exiftool.org/Image-ExifTool-12.26.tar.gz"
 strawberry="https://strawberryperl.com/download/5.32.1.1/strawberry-perl-5.32.1.1-64bit-portable.zip"
 
 cd $(dirname "${BASH_SOURCE[0]}")
@@ -29,6 +29,7 @@ cpanm.bat --notest Win32::FindFile
 pushd tmp/strawberry/perl
 rm -rf lib/CORE lib/CPAN?(.pm) lib/Pod
 rm -rf lib/Module lib/Software lib/ExtUtils
+rm -rf lib/perl5db.pl
 rm -rf lib/Devel lib/Test*
 rm -rf lib/auto/Devel lib/auto/Test*
 rm -rf lib/Unicode lib/Encode/+(CN|JP|KR|TW)?(.pm)
