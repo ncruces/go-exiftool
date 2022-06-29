@@ -3,7 +3,7 @@ package exiftool
 import (
 	"bufio"
 	"bytes"
-	"fmt"
+	"errors"
 	"io"
 	"os/exec"
 	"sync"
@@ -112,8 +112,8 @@ func (e *Server) Shutdown() error {
 	e.cmdMtx.Lock()
 	defer e.cmdMtx.Unlock()
 
-	fmt.Fprintln(e.stdin, "-stay_open")
-	fmt.Fprintln(e.stdin, "false")
+	fprintln(e.stdin, "-stay_open")
+	fprintln(e.stdin, "false")
 	e.stdin.Close()
 
 	err := e.cmd.Wait()
@@ -127,10 +127,10 @@ func (e *Server) Command(arg ...string) ([]byte, error) {
 	defer e.cmdMtx.Unlock()
 
 	for _, a := range arg {
-		fmt.Fprintln(e.stdin, a)
+		fprintln(e.stdin, a)
 	}
 
-	_, err := fmt.Fprintln(e.stdin, "-execute"+boundary)
+	_, err := fprintln(e.stdin, "-execute"+boundary)
 	if err != nil {
 		e.restart()
 		return nil, err
@@ -154,11 +154,9 @@ func (e *Server) Command(arg ...string) ([]byte, error) {
 	}
 
 	if len(e.stderr.Bytes()) > 0 {
-		return nil, fmt.Errorf("exiftool: %s", bytes.TrimSpace(e.stderr.Bytes()))
+		return nil, errors.New("exiftool: " + string(bytes.TrimSpace(e.stderr.Bytes())))
 	}
-	res := make([]byte, len(e.stdout.Bytes()))
-	copy(res, e.stdout.Bytes())
-	return res, nil
+	return append([]byte(nil), e.stdout.Bytes()...), nil
 }
 
 func splitReadyToken(data []byte, atEOF bool) (advance int, token []byte, err error) {
@@ -175,6 +173,5 @@ func splitReadyToken(data []byte, atEOF bool) (advance int, token []byte, err er
 	if atEOF {
 		return 0, data, io.EOF
 	}
-
 	return 0, nil, nil
 }
