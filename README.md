@@ -2,7 +2,7 @@
 
 [![PkgGoDev](https://pkg.go.dev/badge/image)](https://pkg.go.dev/github.com/ncruces/go-exiftool)
 
-This uses the the excellent ExifTool by Phil Harvey:
+This uses the excellent ExifTool by Phil Harvey:
 - https://exiftool.org/ 
 - https://github.com/exiftool/exiftool
 
