@@ -11,5 +11,5 @@ for both Unix (Linux/macOS/etc) and Windows.
 Use [Git BASH](https://gitforwindows.org/) to run the Windows script.
 
 The Windows version uses Strawberry Perl:
-- http://strawberryperl.com/
+- https://strawberryperl.com/
 - https://github.com/StrawberryPerl
