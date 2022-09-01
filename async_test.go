@@ -2,13 +2,14 @@ package exiftool
 
 import (
 	"bytes"
-	"io/ioutil"
+	"context"
+	"io"
 	"strconv"
 	"testing"
 )
 
 func TestCommandAsync(t *testing.T) {
-	in, out, err := CommandAsync("-@", "-")
+	in, out, err := CommandAsync(context.TODO(), "-@", "-")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -23,7 +24,7 @@ func TestCommandAsync(t *testing.T) {
 		t.Error(err)
 	}
 
-	dat, err := ioutil.ReadAll(out)
+	dat, err := io.ReadAll(out)
 	if err != nil {
 		t.Fatal(err)
 	}

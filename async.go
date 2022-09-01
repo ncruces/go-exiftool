@@ -2,6 +2,7 @@ package exiftool
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"io"
 	"os/exec"
@@ -10,7 +11,7 @@ import (
 // Command runs an ExifTool command with the given arguments asynchronously,
 // and returns pipes connected to its stdin and stdout.
 // Writing to stdin and reading from stdout should be done concurrently.
-func CommandAsync(arg ...string) (stdin io.WriteCloser, stdout io.ReadCloser, err error) {
+func CommandAsync(ctx context.Context, arg ...string) (stdin io.WriteCloser, stdout io.ReadCloser, err error) {
 	var args []string
 
 	if Arg1 != "" {
@@ -25,7 +26,7 @@ func CommandAsync(arg ...string) (stdin io.WriteCloser, stdout io.ReadCloser, er
 
 	var res asyncResult
 
-	res.cmd = exec.Command(Exec, args...)
+	res.cmd = exec.CommandContext(ctx, Exec, args...)
 	res.cmd.Stderr = &res.err
 	res.out, err = res.cmd.StdoutPipe()
 	if err != nil {
