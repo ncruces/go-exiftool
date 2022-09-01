@@ -21,7 +21,7 @@ type Server struct {
 	cmdMtx sync.Mutex
 	done   bool
 	cmd    *exec.Cmd
-	stdin  io.WriteCloser
+	stdin  printer
 	stdout *bufio.Scanner
 	stderr *bufio.Scanner
 }
@@ -64,7 +64,7 @@ func (e *Server) start() error {
 		return err
 	}
 
-	e.stdin = stdin
+	e.stdin = printer{w: stdin}
 	e.stdout = bufio.NewScanner(stdout)
 	e.stderr = bufio.NewScanner(stderr)
 	e.stdout.Split(splitReadyToken)
@@ -112,9 +112,8 @@ func (e *Server) Shutdown() error {
 	e.cmdMtx.Lock()
 	defer e.cmdMtx.Unlock()
 
-	fprintln(e.stdin, "-stay_open")
-	fprintln(e.stdin, "false")
-	e.stdin.Close()
+	e.stdin.print("-stay_open", "false")
+	e.stdin.close()
 
 	err := e.cmd.Wait()
 	return err
@@ -126,11 +125,8 @@ func (e *Server) Command(arg ...string) ([]byte, error) {
 	e.cmdMtx.Lock()
 	defer e.cmdMtx.Unlock()
 
-	for _, a := range arg {
-		fprintln(e.stdin, a)
-	}
-
-	_, err := fprintln(e.stdin, "-execute"+boundary)
+	e.stdin.print(arg...)
+	err := e.stdin.print("-execute" + boundary)
 	if err != nil {
 		e.restart()
 		return nil, err
