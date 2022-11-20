@@ -1,0 +1,26 @@
+name: Windows distribution
+
+on:
+  workflow_dispatch:
+  
+jobs:
+
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up ExifTool
+      run: ./dist_windows.sh exiftool
+      shell: bash
+
+    - name: Package ExifTool
+      run: |
+        tar cvf exiftool_windows.zip exiftool
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+
+      with:
+        name: exiftool_windows.zip
+        path: exiftool_windows.zip

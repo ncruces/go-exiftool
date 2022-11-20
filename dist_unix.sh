@@ -3,8 +3,7 @@
 set -eo pipefail
 shopt -s extglob
 
-exiftool="https://exiftool.org/Image-ExifTool-12.42.tar.gz"
-
+exiftool="https://exiftool.org/Image-ExifTool-12.50.tar.gz"
 
 cd $(dirname "${BASH_SOURCE[0]}")
 
