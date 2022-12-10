@@ -1,0 +1,43 @@
+name: Distribution
+
+on:
+  workflow_dispatch:
+  
+jobs:
+
+  unix:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up ExifTool
+      run: ./dist_unix.sh exiftool
+
+    - name: Package ExifTool
+      run: |
+        tar -cv exiftool | gzip --best > exiftool_unix.tgz
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+
+      with:
+        path: exiftool_unix.tgz
+
+  windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up ExifTool
+      run: ./dist_windows.sh exiftool
+      shell: bash
+
+    - name: Package ExifTool
+      run: |
+        7z a -mx9 exiftool_windows.zip exiftool
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+
+      with:
+        path: exiftool_windows.zip
