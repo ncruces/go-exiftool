@@ -1,3 +1,3 @@
 module github.com/ncruces/go-exiftool
 
-go 1.17
+go 1.19

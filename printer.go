@@ -4,6 +4,7 @@ import "io"
 
 type printer struct {
 	w   io.WriteCloser
+	buf []byte
 	err error
 }
 
@@ -16,13 +17,21 @@ func (p *printer) print(lines ...string) error {
 	for _, l := range lines {
 		n += len(l)
 	}
-	buf := make([]byte, 0, n)
-	for _, l := range lines {
-		buf = append(buf, l...)
-		buf = append(buf, '\n')
+
+	if cap(p.buf) < n {
+		p.buf = append(p.buf, make([]byte, n-len(p.buf))...)
+	} else {
+		p.buf = p.buf[:n]
 	}
 
-	_, p.err = p.w.Write(buf)
+	i := 0
+	for _, l := range lines {
+		i += copy(p.buf[i:], l)
+		p.buf[i] = '\n'
+		i++
+	}
+
+	_, p.err = p.w.Write(p.buf)
 	return p.err
 }
 
