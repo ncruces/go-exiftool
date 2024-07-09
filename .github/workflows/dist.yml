@@ -8,7 +8,7 @@ jobs:
   unix:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Set up ExifTool
       run: ./dist_unix.sh exiftool
@@ -18,15 +18,15 @@ jobs:
         tar -cv exiftool | gzip --best > exiftool_unix.tgz
         
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
-
+      uses: actions/upload-artifact@v4
       with:
+        name: exiftool_unix
         path: exiftool_unix.tgz
 
   windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Set up ExifTool
       run: ./dist_windows.sh exiftool
@@ -37,7 +37,7 @@ jobs:
         7z a -mx9 exiftool_windows.zip exiftool
         
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
-
+      uses: actions/upload-artifact@v4
       with:
+        name: exiftool_windows
         path: exiftool_windows.zip

@@ -3,7 +3,7 @@
 set -eo pipefail
 shopt -s extglob
 
-exiftool="https://exiftool.org/Image-ExifTool-12.60.tar.gz"
+exiftool="https://exiftool.org/Image-ExifTool-12.76.tar.gz"
 
 cd $(dirname "${BASH_SOURCE[0]}")
 
@@ -12,7 +12,7 @@ rm -rf tmp/
 mkdir -p tmp/
 
 # Download Exiftool
-curl "$exiftool" | tar xz -C tmp/
+curl -L# "$exiftool" | tar xz -C tmp/
 mv tmp/* tmp/exiftool
 
 # Cleanup and test
