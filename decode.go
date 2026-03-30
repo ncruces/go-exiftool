@@ -5,8 +5,13 @@ import (
 	"errors"
 )
 
-// Unmarshal parses the standard, short or veryShort ExifTool output formats.
-// Loads tag names and values into a map.
+// Unmarshal parses line-oriented ExifTool text output: each line must contain a key,
+// the substring ": ", and a value (covers the default format and -s / short output).
+// It does not parse JSON (-json), XML (-X), or other structured outputs.
+//
+// Values stored in m are subslices of data; if data is reused or modified after the
+// call, entries in m may change. Copy with append([]byte(nil), v...) when retaining
+// values past the lifetime of data.
 func Unmarshal(data []byte, m map[string][]byte) error {
 	for len(data) > 0 {
 		i := bytes.IndexByte(data, '\n')

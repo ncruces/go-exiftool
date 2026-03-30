@@ -110,7 +110,9 @@ func TestServerWithConfig(t *testing.T) {
 		return
 	}
 	// If it succeeds, verify the server works
-	e.Shutdown()
+	if err := e.Shutdown(); err != nil {
+		t.Logf("Shutdown error (acceptable): %v", err)
+	}
 }
 
 func TestServerRestart(t *testing.T) {
@@ -148,8 +150,12 @@ func TestServerCommandAfterKill(t *testing.T) {
 	t.Logf("Before kill: %s", bytes.TrimSpace(out))
 
 	// Kill the underlying process to trigger restart path
-	e.cmd.Process.Kill()
-	e.cmd.Process.Release()
+	if err := e.cmd.Process.Kill(); err != nil {
+		t.Logf("Kill error: %v", err)
+	}
+	if err := e.cmd.Process.Release(); err != nil {
+		t.Logf("Release error: %v", err)
+	}
 
 	// The next command should trigger a restart attempt
 	// Since done is not set, restart will try to start a new process
@@ -161,5 +167,7 @@ func TestServerCommandAfterKill(t *testing.T) {
 	}
 
 	// Clean up
-	e.Close()
+	if err := e.Close(); err != nil {
+		t.Fatal(err)
+	}
 }

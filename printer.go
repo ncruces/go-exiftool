@@ -2,6 +2,8 @@ package exiftool
 
 import "io"
 
+// printer writes stay_open command lines to stdin, one string per line, reusing an internal buffer.
+// After the first write error, print becomes a no-op returning that error; close preserves it.
 type printer struct {
 	w   io.WriteCloser
 	buf []byte
@@ -19,7 +21,7 @@ func (p *printer) print(lines ...string) error {
 	}
 
 	if cap(p.buf) < n {
-		p.buf = append(p.buf, make([]byte, n-len(p.buf))...)
+		p.buf = make([]byte, n, n*2)
 	} else {
 		p.buf = p.buf[:n]
 	}

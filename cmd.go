@@ -1,36 +1,60 @@
 package exiftool
 
 import (
+	"bytes"
 	"context"
+	"errors"
 	"io"
-	"os/exec"
+	"os"
 )
 
-func commandArgs(arg []string) []string {
-	var args []string
-
-	if Arg1 != "" {
-		args = append(args, Arg1)
-	}
-	if Config != "" {
-		args = append(args, "-config", Config)
-	}
-
-	args = append(args, "-charset", "filename=utf8")
-	args = append(args, arg...)
-	return args
+// Command runs ExifTool once with the given arguments and returns combined stdout.
+// stdin may be nil; when ExifTool is invoked with "-@ -", lines from stdin supply
+// extra arguments. Host paths in arg are resolved relative to the process working
+// directory (mounted at "/" inside the WASM sandbox together with embedded Perl libs;
+// see package documentation).
+//
+// Command is equivalent to CommandContext with [context.Background].
+func Command(stdin io.Reader, arg ...string) ([]byte, error) {
+	return CommandContext(context.Background(), stdin, arg...)
 }
 
-// Command runs an ExifTool command with the given arguments and stdin and returns its stdout.
-func Command(stdin io.Reader, arg ...string) (stdout []byte, err error) {
-	cmd := exec.Command(Exec, commandArgs(arg)...)
-	cmd.Stdin = stdin
-	return cmd.Output()
-}
+// CommandContext is like [Command] but honors ctx for cancellation only before the
+// WASM runtime is created; a context deadline or cancel during eval is not guaranteed
+// to interrupt an in-flight ExifTool run.
+//
+// Non-empty stderr from ExifTool is returned as an error. Some failures may still
+// return partial stdout together with an error.
+func CommandContext(ctx context.Context, stdin io.Reader, arg ...string) (out []byte, err error) {
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	default:
+	}
 
-// CommandContext is like Command but includes a context.
-func CommandContext(ctx context.Context, stdin io.Reader, arg ...string) (stdout []byte, err error) {
-	cmd := exec.CommandContext(ctx, Exec, commandArgs(arg)...)
-	cmd.Stdin = stdin
-	return cmd.Output()
+	r, err := newRuntime(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if closeErr := r.Close(ctx); closeErr != nil && err == nil {
+			err = closeErr
+		}
+	}()
+
+	compiled, err := r.CompileModule(ctx, wasmBinary)
+	if err != nil {
+		return nil, err
+	}
+
+	var stdout, stderr bytes.Buffer
+	args := commandArgs(arg)
+	out, err = evalModule(ctx, r, compiled, defaultRootFS(), nil, []string{os.TempDir()}, stdin, &stdout, &stderr, args...)
+	if err != nil {
+		return out, err
+	}
+	if stderr.Len() > 0 {
+		return out, errors.New("exiftool: " + stderr.String())
+	}
+	return out, nil
 }

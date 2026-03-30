@@ -1,4 +1,4 @@
-# Directories used for the ExifTool distro
+# Local output (optional)
 /dist
 /tmp
 
@@ -17,3 +17,8 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+.claude
+.kilo
+.vscode
+AGENTS.md

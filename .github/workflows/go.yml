@@ -19,11 +19,8 @@ jobs:
       with:
         go-version: oldstable
 
-    - name: Set up ExifTool
-      run: ./dist_unix.sh
-
     - name: Build
       run: go build -v ./...
 
     - name: Test
-      run: go test -v ./...
+      run: go test -v ./... -timeout 15m

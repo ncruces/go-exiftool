@@ -56,7 +56,11 @@ func TestServerReadTags(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer e.Shutdown()
+	defer func() {
+		if err := e.Shutdown(); err != nil {
+			t.Logf("Shutdown error: %v", err)
+		}
+	}()
 
 	out, err := e.Command("-Artist", "-Copyright", "-Make", "-Model", "testdata/sample.jpg")
 	if err != nil {
@@ -87,7 +91,11 @@ func TestServerReadAllTags(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer e.Shutdown()
+	defer func() {
+		if err := e.Shutdown(); err != nil {
+			t.Logf("Shutdown error: %v", err)
+		}
+	}()
 
 	out, err := e.Command("testdata/sample.jpg")
 	if err != nil {
@@ -113,7 +121,11 @@ func TestServerGPSTags(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer e.Shutdown()
+	defer func() {
+		if err := e.Shutdown(); err != nil {
+			t.Logf("Shutdown error: %v", err)
+		}
+	}()
 
 	out, err := e.Command("-GPSLatitude", "-GPSLongitude", "-GPSAltitude", "testdata/sample_gps.jpg")
 	if err != nil {
@@ -141,7 +153,11 @@ func TestServerMultipleCommands(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer e.Shutdown()
+	defer func() {
+		if err := e.Shutdown(); err != nil {
+			t.Logf("Shutdown error: %v", err)
+		}
+	}()
 
 	// Execute multiple sequential commands
 	for i := 0; i < 5; i++ {
@@ -160,7 +176,11 @@ func TestServerMultipleFiles(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer e.Shutdown()
+	defer func() {
+		if err := e.Shutdown(); err != nil {
+			t.Logf("Shutdown error: %v", err)
+		}
+	}()
 
 	out, err := e.Command("-FileName", "-Artist", "testdata/sample.jpg", "testdata/sample_gps.jpg")
 	if err != nil {
@@ -180,7 +200,11 @@ func TestServerNonexistentFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer e.Shutdown()
+	defer func() {
+		if err := e.Shutdown(); err != nil {
+			t.Logf("Shutdown error: %v", err)
+		}
+	}()
 
 	_, err = e.Command("testdata/nonexistent.jpg")
 	if err == nil {
@@ -194,7 +218,11 @@ func TestServerShortFormat(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer e.Shutdown()
+	defer func() {
+		if err := e.Shutdown(); err != nil {
+			t.Logf("Shutdown error: %v", err)
+		}
+	}()
 
 	out, err := e.Command("-s", "-Artist", "testdata/sample.jpg")
 	if err != nil {
@@ -227,7 +255,11 @@ func TestServerWriteTag(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer e.Shutdown()
+	defer func() {
+		if err := e.Shutdown(); err != nil {
+			t.Logf("Shutdown error: %v", err)
+		}
+	}()
 
 	// Write a new tag
 	_, err = e.Command("-Artist=Server Artist", "-overwrite_original", tmpFile)
@@ -267,7 +299,11 @@ func TestServerDeleteTag(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer e.Shutdown()
+	defer func() {
+		if err := e.Shutdown(); err != nil {
+			t.Logf("Shutdown error: %v", err)
+		}
+	}()
 
 	// Delete the Artist tag
 	_, err = e.Command("-Artist=", "-overwrite_original", tmpFile)
@@ -307,7 +343,11 @@ func TestServerCopyTags(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer e.Shutdown()
+	defer func() {
+		if err := e.Shutdown(); err != nil {
+			t.Logf("Shutdown error: %v", err)
+		}
+	}()
 
 	// Copy tags
 	_, err = e.Command("-TagsFromFile", "testdata/sample.jpg", "-Artist", "-Copyright", "-overwrite_original", dstFile)
@@ -339,7 +379,11 @@ func TestServerJSONOutput(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer e.Shutdown()
+	defer func() {
+		if err := e.Shutdown(); err != nil {
+			t.Logf("Shutdown error: %v", err)
+		}
+	}()
 
 	out, err := e.Command("-json", "-Artist", "-Copyright", "testdata/sample.jpg")
 	if err != nil {
@@ -378,7 +422,11 @@ func TestServerConcurrentCommands(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer e.Shutdown()
+	defer func() {
+		if err := e.Shutdown(); err != nil {
+			t.Logf("Shutdown error: %v", err)
+		}
+	}()
 
 	var wg sync.WaitGroup
 	errs := make(chan error, 10)
@@ -411,7 +459,11 @@ func TestServerConcurrentReads(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer e.Shutdown()
+	defer func() {
+		if err := e.Shutdown(); err != nil {
+			t.Logf("Shutdown error: %v", err)
+		}
+	}()
 
 	var wg sync.WaitGroup
 	errors := make(chan error, 5)
@@ -451,7 +503,11 @@ func TestServerCommonArgs(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer e.Shutdown()
+	defer func() {
+		if err := e.Shutdown(); err != nil {
+			t.Logf("Shutdown error: %v", err)
+		}
+	}()
 
 	out, err := e.Command("testdata/sample.jpg")
 	if err != nil {
@@ -473,7 +529,11 @@ func TestServerPNG(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer e.Shutdown()
+	defer func() {
+		if err := e.Shutdown(); err != nil {
+			t.Logf("Shutdown error: %v", err)
+		}
+	}()
 
 	out, err := e.Command("-FileType", "testdata/sample.png")
 	if err != nil {
@@ -495,7 +555,11 @@ func TestServerTIFF(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer e.Shutdown()
+	defer func() {
+		if err := e.Shutdown(); err != nil {
+			t.Logf("Shutdown error: %v", err)
+		}
+	}()
 
 	out, err := e.Command("-Artist", "testdata/sample.tiff")
 	if err != nil {

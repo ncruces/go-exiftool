@@ -25,19 +25,25 @@ func Test_printer_print(t *testing.T) {
 
 	printer := printer{w: nopCloser{&buf}}
 
-	printer.print("abc", "def")
+	if err := printer.print("abc", "def"); err != nil {
+		t.Fatal(err)
+	}
 	if got, want := buf.String(), "abc\ndef\n"; got != want {
 		t.Errorf("got %q, want %q", got, want)
 	}
 	buf.Reset()
 
-	printer.print("123")
+	if err := printer.print("123"); err != nil {
+		t.Fatal(err)
+	}
 	if got, want := buf.String(), "123\n"; got != want {
 		t.Errorf("got %q, want %q", got, want)
 	}
 	buf.Reset()
 
-	printer.print("xyzw", "rgba", "stpq")
+	if err := printer.print("xyzw", "rgba", "stpq"); err != nil {
+		t.Fatal(err)
+	}
 	if got, want := buf.String(), "xyzw\nrgba\nstpq\n"; got != want {
 		t.Errorf("got %q, want %q", got, want)
 	}
@@ -48,7 +54,9 @@ func Test_printer_print_empty(t *testing.T) {
 	var buf strings.Builder
 	printer := printer{w: nopCloser{&buf}}
 
-	printer.print("")
+	if err := printer.print(""); err != nil {
+		t.Fatal(err)
+	}
 	if got, want := buf.String(), "\n"; got != want {
 		t.Errorf("got %q, want %q", got, want)
 	}
@@ -58,7 +66,9 @@ func Test_printer_print_single(t *testing.T) {
 	var buf strings.Builder
 	printer := printer{w: nopCloser{&buf}}
 
-	printer.print("hello")
+	if err := printer.print("hello"); err != nil {
+		t.Fatal(err)
+	}
 	if got, want := buf.String(), "hello\n"; got != want {
 		t.Errorf("got %q, want %q", got, want)
 	}
@@ -128,7 +138,9 @@ func Test_printer_close_preservesWriteError(t *testing.T) {
 	printer := printer{w: w}
 
 	// First, trigger a write error
-	printer.print("test")
+	if err := printer.print("test"); err != writeErr {
+		t.Fatalf("print: got %v, want %v", err, writeErr)
+	}
 
 	// Close should preserve the write error, not the close error
 	err := printer.close()
@@ -148,19 +160,25 @@ func Test_printer_print_bufferGrowth(t *testing.T) {
 	printer := printer{w: nopCloser{&buf}}
 
 	// Small initial write
-	printer.print("short")
+	if err := printer.print("short"); err != nil {
+		t.Fatal(err)
+	}
 	buf.Reset()
 
 	// Large write should grow buffer
 	longLine := strings.Repeat("x", 10000)
-	printer.print(longLine)
+	if err := printer.print(longLine); err != nil {
+		t.Fatal(err)
+	}
 	if got := buf.String(); got != longLine+"\n" {
 		t.Errorf("large write: got %d bytes, want %d bytes", len(got), len(longLine)+1)
 	}
 	buf.Reset()
 
 	// Subsequent small write should reuse buffer
-	printer.print("small")
+	if err := printer.print("small"); err != nil {
+		t.Fatal(err)
+	}
 	if got, want := buf.String(), "small\n"; got != want {
 		t.Errorf("after growth: got %q, want %q", got, want)
 	}
@@ -170,7 +188,9 @@ func Test_printer_print_unicode(t *testing.T) {
 	var buf strings.Builder
 	printer := printer{w: nopCloser{&buf}}
 
-	printer.print("日本語", "Ünïcödé")
+	if err := printer.print("日本語", "Ünïcödé"); err != nil {
+		t.Fatal(err)
+	}
 	if got, want := buf.String(), "日本語\nÜnïcödé\n"; got != want {
 		t.Errorf("got %q, want %q", got, want)
 	}
